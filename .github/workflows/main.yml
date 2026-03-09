@@ -12,24 +12,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Docker Login
-      uses: docker/login-action@v2
-      with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Docker Login
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: Build and Push
-      run: |
-        docker build -t seohyunkirn/flask-app:${{ github.sha }} .
-        docker push 본인seohyunkirn/flask-app:${{ github.sha }}
+      - name: Build and Push
+        run: |
+          docker build -t seohyunkirn/flask-app:${{ github.sha }} .
+          docker push seohyunkirn/flask-app:${{ github.sha }}
 
-    - name: Update Manifest and Push
-      run: |
-        sed -i "s|image: .*|image: seohyunkirn/flask-app:${{ github.sha }}|g" deployment.yaml
-        git config --global user.email "bot@github.com"
-        git config --global user.name "github-actions[bot]"
-        git add deployment.yaml
-        git commit -m "update image tag"
-        git push
+      - name: Update Manifest and Push
+        run: |
+          sed -i "s|image: .*|image: seohyunkirn/flask-app:${{ github.sha }}|g" deployment.yaml
+          git config --global user.email "bot@github.com"
+          git config --global user.name "github-actions[bot]"
+          git add deployment.yaml
+          git commit -m "chore: update image tag" || echo "No changes to commit"
+          git push
